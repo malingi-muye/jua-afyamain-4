@@ -98,7 +98,7 @@ export default async function DashboardPage() {
   const dashboardData = await getDashboardData()
 
   return (
-    <DashboardContent
+    <RoleBasedDashboard
       user={dashboardData.user}
       initialData={dashboardData.data}
     />
