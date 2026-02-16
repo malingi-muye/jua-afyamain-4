@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environment Debug</title>
+    <style>
+        body { font-family: monospace; padding: 20px; background: #f5f5f5; }
+        pre { background: white; padding: 10px; border-radius: 5px; overflow-x: auto; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Environment Variables Debug</h1>
+    <h2>import.meta.env values:</h2>
+    <pre id="output">Loading...</pre>
+    <script type="module">
+        const output = document.getElementById('output');
+        const env = import.meta.env;
+        
+        console.log('All import.meta.env:', env);
+        
+        const debug = {
+            'VITE_SUPABASE_URL': env.VITE_SUPABASE_URL,
+            'VITE_SUPABASE_ANON_KEY': env.VITE_SUPABASE_ANON_KEY,
+            'NEXT_PUBLIC_SUPABASE_URL': env.NEXT_PUBLIC_SUPABASE_URL,
+            'NEXT_PUBLIC_SUPABASE_ANON_KEY': env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+            'VITE_GEMINI_API_KEY': env.VITE_GEMINI_API_KEY,
+            'DEV': env.DEV,
+            'MODE': env.MODE
+        };
+        
+        output.innerHTML = '<pre>' + JSON.stringify(debug, null, 2) + '</pre>';
+        
+        if (debug.VITE_SUPABASE_URL) {
+            output.innerHTML += '<p class="success">✓ VITE_SUPABASE_URL is loaded</p>';
+        } else {
+            output.innerHTML += '<p class="error">✗ VITE_SUPABASE_URL is NOT loaded</p>';
+        }
+    </script>
+</body>
+</html>

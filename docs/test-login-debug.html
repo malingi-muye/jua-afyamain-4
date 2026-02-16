@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JuaAfya Login Debugger</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #3462EE;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+           color: #666;
+            margin-bottom: 30px;
+        }
+        .status-box {
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            font-family: monospace;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border:1px solid #bee5eb;
+        }
+        .warning {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+        button {
+            background: #3462EE;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        button:hover {
+            background: #2851cc;
+        }
+        .log {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+            margin-top: 20px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        .log-entry {
+            padding: 5px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🏥 JuaAfya Login Debugger</h1>
+        <p class="subtitle">This tool helps diagnose login issues</p>
+        
+        <div id="status">
+            <div class="status-box info">
+                <strong>Status:</strong> Checking environment...
+            </div>
+        </div>
+        
+        <button onclick="testLogin()">🧪 Test Login Flow</button>
+        <button onclick="checkEnv()">🔍 Check Environment</button>
+        <button onclick="clearLogs()">🗑️ Clear Logs</button>
+        
+        <div id="logs" class="log">
+            <div class="log-entry"><strong>Ready to run diagnostics...</strong></div>
+        </div>
+    </div>
+    
+    <script>
+        const logs = [];
+        
+        function addLog(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            logs.push({ timestamp, message, type });
+            updateLogDisplay();
+        }
+        
+        function updateLogDisplay() {
+            const logsDiv = document.getElementById('logs');
+            logsDiv.innerHTML = logs.map(log => 
+                `<div class="log-entry">[${log.timestamp}] ${log.message}</div>`
+            ).join('');
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+       
+        function clearLogs() {
+            logs.length = 0;
+            updateLogDisplay();
+            addLog('Logs cleared', 'info');
+        }
+        
+        function updateStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.innerHTML = `<div class="status-box ${type}"><strong>Status:</strong> ${message}</div>`;
+        }
+        
+        async function checkEnv() {
+            addLog('=== ENVIRONMENT CHECK ===');
+            
+            // Check if we're on localhost
+            addLog(`Origin: ${window.location.origin}`);
+            addLog(`Protocol: ${window.location.protocol}`);
+            
+            // Test if the main app is reachable
+            try {
+                const response = await fetch('http://localhost:3000/');
+                if (response.ok) {
+                    addLog('✅ Main app is reachable at http://localhost:3000/');
+                    updateStatus('Main app is running', 'success');
+                } else {
+                    addLog(`⚠️ Main app returned status: ${response.status}`);
+                    updateStatus('Main app may have issues', 'warning');
+                }
+            } catch (error) {
+                addLog('❌ Cannot reach main app: ' + error.message);
+                updateStatus('Main app is not running!', 'error');
+            }
+            
+            addLog('=== END ENVIRONMENT CHECK ===');
+        }
+        
+        async function testLogin() {
+            addLog('=== LOGIN TEST STARTED ===');
+            updateStatus('Testing login...', 'info');
+            
+            const testCredentials = {
+                email: 'superadmin@juaafya.com',
+                password: 'JuaAfya@Demo123'
+            };
+            
+            addLog(`Testing with email: ${testCredentials.email}`);
+            
+            // Note: This will actually try to call Supabase
+            addLog('⚠️ This is a client-side test. Real login should happen on http://localhost:3000/');
+            addLog('📋 Please open http://localhost:3000/ in another tab and try logging in there.');
+            addLog('👀 Watch the browser console (F12) for detailed error messages.');
+            
+            addLog('Expected login flow:');
+            addLog('1. Enter email: ' + testCredentials.email);
+            addLog('2. Enter password: (hidden for security)');
+            addLog('3. Click "Sign In" button');
+            addLog('4. Check console for [useEnterpriseAuth] messages');
+            addLog('5. If successful, you  should be redirected to /dashboard');
+            
+            updateStatus('Manual test required - see logs', 'warning');
+            addLog('=== LOGIN TEST COMPLETED ===');
+        }
+        
+        // Auto-run environment check on load
+        window.addEventListener('load', () => {
+            setTimeout(checkEnv, 100);
+        });
+    </script>
+</body>
+</html>
